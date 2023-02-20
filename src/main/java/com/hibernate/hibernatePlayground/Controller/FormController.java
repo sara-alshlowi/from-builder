@@ -1,10 +1,14 @@
 package com.hibernate.hibernatePlayground.Controller;
 
 import com.hibernate.hibernatePlayground.Entity.Dto.FormDto;
+import com.hibernate.hibernatePlayground.Entity.Form;
 import com.hibernate.hibernatePlayground.Services.FormService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -12,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class FormController {
 
     private final FormService formService;
+
+    @GetMapping
+    public ResponseEntity<List<FormDto>> listForm(){
+        return ResponseEntity.ok(formService.listForm());
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
