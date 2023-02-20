@@ -16,7 +16,7 @@ import java.util.List;
 public class Field {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="fieldName")
@@ -38,7 +38,7 @@ public class Field {
     private List<Options> options;
 
     @ManyToOne
-    @JoinColumn(name = "form_id", nullable = false)
+    @JoinColumn(name = "form_id")
     private Form form;
 
 

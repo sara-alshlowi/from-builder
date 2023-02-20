@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Options {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="Key")
@@ -27,6 +27,6 @@ public class Options {
     private String lable;
 
     @ManyToOne
-    @JoinColumn(name = "field_id", nullable = false)
+    @JoinColumn(name = "field_id")
     private Field field;
 }

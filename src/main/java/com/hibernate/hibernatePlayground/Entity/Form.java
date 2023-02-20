@@ -16,13 +16,13 @@ import java.util.List;
 public class Form {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "form")
+    @OneToMany(mappedBy = "form", cascade =CascadeType.ALL)
     private List<Field> fields;
 
 }
