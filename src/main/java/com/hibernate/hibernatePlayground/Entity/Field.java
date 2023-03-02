@@ -1,5 +1,6 @@
 package com.hibernate.hibernatePlayground.Entity;
 
+import com.hibernate.hibernatePlayground.Entity.Enum.EInputType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,8 @@ public class Field {
     private String fieldName;
 
     @Column(name = "fieldType")
-    private String fieldType;  // should be enum
+    @Enumerated(EnumType.STRING)
+    private EInputType fieldType;
 
     @Column(name="required")
     private Boolean required;
