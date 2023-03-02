@@ -6,26 +6,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Form {
+public class FieldsValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column
+    private String value;
 
-    @OneToMany(mappedBy = "form", cascade =CascadeType.ALL)
-    private List<Field> fields;
+    @ManyToOne
+    @JoinColumn(name="field_id")
+    private Field field;
 
-    @OneToMany(mappedBy = "form", cascade =CascadeType.ALL) // need to know the cascade type
-    private List<Submission> submission;
-
+    @ManyToOne
+    @JoinColumn(name = "submission_id")
+    private Submission submission;
 }

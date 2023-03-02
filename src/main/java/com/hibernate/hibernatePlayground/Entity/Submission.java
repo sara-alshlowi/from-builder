@@ -8,24 +8,22 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Form {
+public class Submission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "form_id")
+    private Form form;
 
-    @OneToMany(mappedBy = "form", cascade =CascadeType.ALL)
-    private List<Field> fields;
-
-    @OneToMany(mappedBy = "form", cascade =CascadeType.ALL) // need to know the cascade type
-    private List<Submission> submission;
+    @OneToMany(mappedBy = "submission" , cascade =CascadeType.ALL)
+    private List<FieldsValue> fieldsValues;
 
 }

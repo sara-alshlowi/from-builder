@@ -41,5 +41,8 @@ public class Field {
     @JoinColumn(name = "form_id")
     private Form form;
 
+    @OneToMany(mappedBy = "field")
+    private List<FieldsValue> fieldsValues;
+
 
 }
