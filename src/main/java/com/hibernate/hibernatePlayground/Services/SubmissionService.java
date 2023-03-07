@@ -10,20 +10,16 @@ import com.hibernate.hibernatePlayground.Entity.Submission;
 import com.hibernate.hibernatePlayground.Repo.FieldRepository;
 import com.hibernate.hibernatePlayground.Repo.FormRepo;
 import com.hibernate.hibernatePlayground.Repo.SubmissionRepository;
+import com.hibernate.hibernatePlayground.exception.ExceptionHandler;
+import com.hibernate.hibernatePlayground.utils.InputValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -35,35 +31,8 @@ public class SubmissionService {
     private final FormRepo formRepo;
     private final FieldRepository fieldRepository;
 
-//    TODO:add all validation methods in sperate class
-    public  static boolean isEmail(String email){
-        return Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
-                .matcher(email).matches();
-    }
-
-    public static boolean isValidDate(String date){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(date.trim());
-        } catch (ParseException ps){
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isNumber(String number){
-        try {
-            Float.parseFloat(number);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     @Transactional(rollbackFor = Exception.class)
-    public void FormSubmission (SubmissionDto submissionDto) throws Exception {
+    public void FormSubmission (SubmissionDto submissionDto) throws Exception, ExceptionHandler {
 //        TODO: add exception handler
 
         Submission submission = submissionMapper.toEntity(submissionDto);
@@ -84,26 +53,38 @@ public class SubmissionService {
                 throw new Exception("not related to the form "+ value.getField().getId());
             }
         }
-        //TODO: should add validation related to each field
+        //add validation related to each field
         for(int i=0; i < fields.size(); i++){
             boolean fieldSubmited = false;
            for(int j=0; j <submission.getFieldsValues().size(); j ++){
                if(submission.getFieldsValues().get(j).getField().getId().equals(fields.get(i).getId())) {
                    fieldSubmited = true;
-                   if(fields.get(i).getFieldType().equals(EInputType.EMAIL) && !isEmail(submission.getFieldsValues()
+                   if(fields.get(i).getFieldType().equals(EInputType.EMAIL) && !InputValidation.isEmail(submission.getFieldsValues()
                            .get(j).getValue())){
                        throw new Exception("please provide valid email with question number "
                                + submission.getFieldsValues().get(j).getField().getId());
                    }
-                   if(fields.get(i).getFieldType().equals(EInputType.DATE) && !isValidDate(submission.getFieldsValues()
+                   if(fields.get(i).getFieldType().equals(EInputType.DATE) && !InputValidation.isValidDate(submission.getFieldsValues()
                            .get(j).getValue())){
                        throw new Exception("please provide valid Date with question number "
                                + submission.getFieldsValues().get(j).getField().getId());
                    }
-                   if(fields.get(i).getFieldType().equals(EInputType.NUMBER) && !isNumber(submission.getFieldsValues()
+                   if(fields.get(i).getFieldType().equals(EInputType.NUMBER) && !InputValidation.isNumber(submission.getFieldsValues()
                            .get(j).getValue())){
-                       throw new Exception("please provide valid Number with question number "
+                       throw new ExceptionHandler("please provide valid Number with question number "
                                + submission.getFieldsValues().get(j).getField().getId());
+                   }
+                   if(submission.getFieldsValues().get(j).getValue().length() < fields.get(i).getMin()){
+                       throw new Exception("the minimum character is " + fields.get(i).getMin());
+                   }
+                   if(submission.getFieldsValues().get(j).getValue().length() > fields.get(i).getMax()){
+                       throw new Exception("the Maximum character is " + fields.get(i).getMax());
+                   }
+                   // TODO: check the option here - check if the answer is related to the fields options
+                   if(fields.get(i).getFieldType().equals(EInputType.CHECKBOX)
+                            || fields.get(i).getFieldType().equals(EInputType.RADIO)
+                           || fields.get(i).getFieldType().equals(EInputType.SELECT)){
+                       System.out.print("check the option here ");
                    }
 
                }
