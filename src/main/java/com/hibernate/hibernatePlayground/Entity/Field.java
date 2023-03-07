@@ -36,7 +36,7 @@ public class Field {
     @Column(name = "max")
     private int max;
 
-    @OneToMany(mappedBy = "field")
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
     private List<Options> options;
 
     @ManyToOne

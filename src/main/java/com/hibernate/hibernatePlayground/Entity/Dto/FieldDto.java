@@ -19,7 +19,7 @@ public class FieldDto {
     private Boolean required;
     private int min;
     private int max;
-    private List<OptionDto> option;
+    private List<OptionDto> options;
 
 
 }
