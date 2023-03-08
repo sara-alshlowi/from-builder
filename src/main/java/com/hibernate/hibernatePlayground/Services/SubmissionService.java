@@ -32,17 +32,14 @@ public class SubmissionService {
     private final FieldRepository fieldRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public void FormSubmission (SubmissionDto submissionDto) throws Exception, ExceptionHandler {
-//        TODO: add exception handler
+    public void FormSubmission (SubmissionDto submissionDto) throws ExceptionHandler {
 
         Submission submission = submissionMapper.toEntity(submissionDto);
         Optional<Form> form = formRepo.findById(submission.getForm().getId());
-//      List<Field> requiredFields = fields.stream()
-//              .filter(field -> field.getRequired().equals(Boolean.TRUE)).collect(Collectors.toList());
 
         // check if the form exist
         if(form.isEmpty()){
-            throw new Exception("there is no form");
+            throw new ExceptionHandler("there is no form");
         }
 
         List<Field> fields = fieldRepository.findAllByForm(form.get());
@@ -50,7 +47,7 @@ public class SubmissionService {
         //the field submitted should be in the fields related to the form
         for (FieldsValue value: submission.getFieldsValues()){
             if (fields.stream().noneMatch(field -> Objects.equals(value.getField().getId(), field.getId()))){
-                throw new Exception("not related to the form "+ value.getField().getId());
+                throw new ExceptionHandler("not related to the form "+ value.getField().getId());
             }
         }
         //add validation related to each field
@@ -61,12 +58,12 @@ public class SubmissionService {
                    fieldSubmited = true;
                    if(fields.get(i).getFieldType().equals(EInputType.EMAIL) && !InputValidation.isEmail(submission.getFieldsValues()
                            .get(j).getValue())){
-                       throw new Exception("please provide valid email with question number "
+                       throw new ExceptionHandler("please provide valid email with question number "
                                + submission.getFieldsValues().get(j).getField().getId());
                    }
                    if(fields.get(i).getFieldType().equals(EInputType.DATE) && !InputValidation.isValidDate(submission.getFieldsValues()
                            .get(j).getValue())){
-                       throw new Exception("please provide valid Date with question number "
+                       throw new ExceptionHandler("please provide valid Date with question number "
                                + submission.getFieldsValues().get(j).getField().getId());
                    }
                    if(fields.get(i).getFieldType().equals(EInputType.NUMBER) && !InputValidation.isNumber(submission.getFieldsValues()
@@ -75,10 +72,10 @@ public class SubmissionService {
                                + submission.getFieldsValues().get(j).getField().getId());
                    }
                    if(submission.getFieldsValues().get(j).getValue().length() < fields.get(i).getMin()){
-                       throw new Exception("the minimum character is " + fields.get(i).getMin());
+                       throw new ExceptionHandler("the minimum character is " + fields.get(i).getMin());
                    }
                    if(submission.getFieldsValues().get(j).getValue().length() > fields.get(i).getMax()){
-                       throw new Exception("the Maximum character is " + fields.get(i).getMax());
+                       throw new ExceptionHandler("the Maximum character is " + fields.get(i).getMax());
                    }
                    // TODO: check the option here - check if the answer is related to the fields options
                    if(fields.get(i).getFieldType().equals(EInputType.CHECKBOX)
@@ -90,7 +87,7 @@ public class SubmissionService {
                }
            }
            if(!fieldSubmited &&  fields.get(i).getRequired()){
-               throw new Exception("the field "+ fields.get(i).getId() + "is required");
+               throw new ExceptionHandler("the field "+ fields.get(i).getId() + "is required");
            }
         }
         Submission newSubmission = submissionRepository.save(submission);
