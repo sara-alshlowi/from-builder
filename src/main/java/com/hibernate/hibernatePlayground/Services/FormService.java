@@ -2,7 +2,6 @@ package com.hibernate.hibernatePlayground.Services;
 
 import com.hibernate.hibernatePlayground.Entity.Dto.FormDto;
 import com.hibernate.hibernatePlayground.Entity.Enum.EInputType;
-import com.hibernate.hibernatePlayground.Entity.Field;
 import com.hibernate.hibernatePlayground.Entity.Form;
 import com.hibernate.hibernatePlayground.Entity.Mapper.FormMapper;
 import com.hibernate.hibernatePlayground.Repo.FormRepo;
@@ -44,8 +43,6 @@ public class FormService {
                 field.getOptions().forEach(options -> options.setField(field));
             }
         });
-
-
     }
 
     public List<FormDto> listForm (){
