@@ -1,14 +1,12 @@
 package com.hibernate.hibernatePlayground.Services;
 
+import com.hibernate.hibernatePlayground.Entity.*;
 import com.hibernate.hibernatePlayground.Entity.Dto.SubmissionDto;
 import com.hibernate.hibernatePlayground.Entity.Enum.EInputType;
-import com.hibernate.hibernatePlayground.Entity.Field;
-import com.hibernate.hibernatePlayground.Entity.FieldsValue;
-import com.hibernate.hibernatePlayground.Entity.Form;
 import com.hibernate.hibernatePlayground.Entity.Mapper.SubmissionMapper;
-import com.hibernate.hibernatePlayground.Entity.Submission;
 import com.hibernate.hibernatePlayground.Repo.FieldRepository;
 import com.hibernate.hibernatePlayground.Repo.FormRepo;
+import com.hibernate.hibernatePlayground.Repo.OptionRepository;
 import com.hibernate.hibernatePlayground.Repo.SubmissionRepository;
 import com.hibernate.hibernatePlayground.exception.ExceptionHandler;
 import com.hibernate.hibernatePlayground.utils.InputValidation;
@@ -30,6 +28,8 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final FormRepo formRepo;
     private final FieldRepository fieldRepository;
+    private final OptionRepository optionRepository;
+
 
     @Transactional(rollbackFor = Exception.class)
     public void FormSubmission (SubmissionDto submissionDto) throws ExceptionHandler {
@@ -81,9 +81,9 @@ public class SubmissionService {
                    if(fields.get(i).getFieldType().equals(EInputType.CHECKBOX)
                             || fields.get(i).getFieldType().equals(EInputType.RADIO)
                            || fields.get(i).getFieldType().equals(EInputType.SELECT)){
+                       List<Options> options = optionRepository.findAllByField(fields.get(i));
                        System.out.print("check the option here ");
                    }
-
                }
            }
            if(!fieldSubmited &&  fields.get(i).getRequired()){
@@ -92,6 +92,5 @@ public class SubmissionService {
         }
         Submission newSubmission = submissionRepository.save(submission);
         newSubmission.getFieldsValues().forEach(fieldsValue -> fieldsValue.setSubmission(newSubmission));
-
     }
 }
