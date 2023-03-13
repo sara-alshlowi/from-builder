@@ -28,4 +28,9 @@ public class FormController {
     public void createForm(@RequestBody FormDto formDto) throws ExceptionHandler {
         formService.createForm(formDto);
     }
+
+    @PutMapping("/{id}")
+    public void updateForm(@PathVariable Long id, @RequestBody FormDto formDto) throws ExceptionHandler {
+        formService.updateForm(id,formDto);
+    }
 }
