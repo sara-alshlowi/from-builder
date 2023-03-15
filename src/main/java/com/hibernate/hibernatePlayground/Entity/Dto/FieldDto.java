@@ -20,6 +20,7 @@ public class FieldDto {
     private int min;
     private int max;
     private List<OptionDto> options;
+    private List<FieldDto> subFields;
 
 
 }

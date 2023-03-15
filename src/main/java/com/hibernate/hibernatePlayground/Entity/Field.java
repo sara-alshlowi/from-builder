@@ -48,5 +48,10 @@ public class Field {
     @OneToMany(mappedBy = "field")
     private List<FieldsValue> fieldsValues;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_field")
+    private Field parentField;
 
+    @OneToMany(mappedBy = "parentField", cascade = CascadeType.ALL)
+    private List<Field> subFields;
 }
