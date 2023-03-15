@@ -2,6 +2,7 @@ package com.hibernate.hibernatePlayground.Services;
 
 import com.hibernate.hibernatePlayground.Entity.Dto.FormDto;
 import com.hibernate.hibernatePlayground.Entity.Enum.EInputType;
+import com.hibernate.hibernatePlayground.Entity.Field;
 import com.hibernate.hibernatePlayground.Entity.Form;
 import com.hibernate.hibernatePlayground.Entity.Mapper.FormMapper;
 import com.hibernate.hibernatePlayground.Repo.FormRepo;
@@ -39,12 +40,26 @@ public class FormService {
         return form.orElseThrow(()-> new ExceptionHandler("form not found"));
     }
 
+    public void setFieldRelationship(Field parentField) {
+        parentField.getSubFields().forEach(subfield -> {
+            subfield.setParentField(parentField);
+            if(subfield.getSubFields() != null){
+                setFieldRelationship(subfield);
+            }
+        });
+
+    }
+
     public void setFormRelationship(Form form){
         form.getFields().forEach(field -> {
             field.setForm(form);
             if(field.getFieldType().equals(EInputType.CHECKBOX)|| field.getFieldType().equals(EInputType.RADIO)
                     || field.getFieldType().equals(EInputType.SELECT)){
                 field.getOptions().forEach(options -> options.setField(field));
+            }
+            if(field.getSubFields() != null){
+                setFieldRelationship(field);
+//                field.getSubFields().forEach(subfield -> subfield.setParentField(field));
             }
         });
     }
